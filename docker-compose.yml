@@ -2,10 +2,9 @@ version: '3.8'
 
 services:
   webhook:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: chatwoot-webhook
+    image: node:18-alpine
+    working_dir: /app
+    command: sh -c "npm install && node server.js"
     ports:
       - "8000:8000"
     environment:
@@ -13,7 +12,13 @@ services:
       - CHATWOOT_API_URL=https://ctw.hubdasgurias.com.br
       - CHATWOOT_BOT_TOKEN=MToASqkt33PwJbJb6Ce1H6jB
       - CHATWOOT_WEBHOOK_SECRET=seu_secreto_aqui
-    restart: unless-stopped
+    volumes:
+      - ./:/app
+    deploy:
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 3
     healthcheck:
       test: ["CMD", "node", "-e", "require('http').get('http://localhost:8000/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
       interval: 30s
