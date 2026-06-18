@@ -11,7 +11,7 @@ services:
       - PORT=8000
       - CHATWOOT_API_URL=https://ctw.hubdasgurias.com.br
       - CHATWOOT_BOT_TOKEN=MToASqkt33PwJbJb6Ce1H6jB
-      - CHATWOOT_WEBHOOK_SECRET=seu_secreto_aqui
+      - CHATWOOT_WEBHOOK_SECRET=rcyfmzDY1w6rgieWFjRZwJFT
     deploy:
       restart_policy:
         condition: any
