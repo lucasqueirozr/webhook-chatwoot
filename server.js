@@ -64,23 +64,28 @@ async function handleMessage(payload) {
         const conversationId = payload.conversation?.id;
         const accountId = payload.account?.id;
         const content = payload.content;
-        const senderName = payload.sender?.name || 'Cliente';
+        const senderId = payload.sender?.id;
 
-        console.log(`💬 Mensagem de ${senderName}: "${content}"`);
-        console.log(`📋 Conversa ID: ${conversationId}, Account ID: ${accountId}`);
+        // 🔍 VERIFICA SE É SEU NÚMERO
+        // Você pode verificar pelo ID do contato ou número de telefone
+        const senderPhone = payload.sender?.phone_number; // ou outro campo
 
-        // PASSO 1: Enviar para o Claude via MCP
-        // Substitua esta parte pela sua integração com o MCP
+        // Lista de números autorizados (apenas você)
+        const allowedNumbers = ['5551998859777']; // Seu número sem @s.whatsapp.net
+
+        if (!allowedNumbers.includes(senderPhone)) {
+            console.log(`⏭️ Número não autorizado: ${senderPhone}. Ignorando.`);
+            return; // Não responde para outros números
+        }
+
+        console.log(`💬 Mensagem de ${senderPhone}: "${content}"`);
+
+        // Processa normalmente para números autorizados
         const claudeResponse = await getClaudeResponse(content);
-
-        // PASSO 2: Enviar a resposta de volta para o Chatwoot
         await sendMessageToChatwoot(accountId, conversationId, claudeResponse);
-
-        console.log(`✅ Resposta enviada: "${claudeResponse}"`);
 
     } catch (error) {
         console.error('❌ Erro ao processar mensagem:', error);
-        throw error;
     }
 }
 
